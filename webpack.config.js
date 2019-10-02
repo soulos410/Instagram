@@ -1,7 +1,13 @@
 var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
+    template: __dirname + '/src/App/index.html',
+    filename: 'index.html',
+    inject: 'body'
+});
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './src/App/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
@@ -11,7 +17,17 @@ module.exports = {
             {
                 test: /\.(js)$/,
                 exclude: /node_modules/,
-                use: ['babel-loader', 'eslint-loader']
+                loader: 'babel-loader',
+                options: {
+                    presets: [
+                        '@babel/preset-env',
+                        '@babel/react', {
+                            plugins: [
+                                '@babel/plugin-proposal-class-properties'
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 test: /\.s[ac]ss$/i,
@@ -23,6 +39,7 @@ module.exports = {
             }
         ]
     },
+    plugins: [HtmlWebpackPluginConfig],
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         compress: true,
